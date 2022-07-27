@@ -74,7 +74,7 @@ void TalosCommonRobotModule::setupCommon()
 
   auto fileByBodyName = stdCollisionsFiles(mb);
   initConvexHull(fileByBodyName);
-  
+
   // Force Sensor attachments
   _forceSensors.emplace_back("RightFootForceSensor", "leg_right_6_link", sva::PTransformd(Eigen::Vector3d(0, 0, -0.098)));
   _forceSensors.emplace_back("LeftFootForceSensor", "leg_left_6_link", sva::PTransformd(Eigen::Vector3d(0, 0, -0.098)));
@@ -82,15 +82,18 @@ void TalosCommonRobotModule::setupCommon()
   _forceSensors.emplace_back("LeftHandForceSensor", "arm_left_7_link", sva::PTransformd(Eigen::Vector3d(0, 0, -0.14)));
 
   _bodySensors.clear();
-  _bodySensors.emplace_back("Accelerometer", "base_link", sva::PTransformd(Eigen::Vector3d(-0.0325, 0, 0.1095)));
+  Eigen::Quaterniond accelerometer_rotationalOffsetQ(0.0, -0.707, -0.707, 0.0);
+  _bodySensors.emplace_back("Accelerometer", "torso_2_link", sva::PTransformd(accelerometer_rotationalOffsetQ, Eigen::Vector3d(0.049, 0.000, 0.078)));
   _bodySensors.emplace_back("FloatingBase", "base_link", sva::PTransformd::Identity());
 
-  // Configure the stabilizer.
+  // Configure the stabilizer
   _lipmStabilizerConfig.leftFootSurface = "LeftFootCenter";
   _lipmStabilizerConfig.rightFootSurface = "RightFootCenter";
   _lipmStabilizerConfig.torsoBodyName = "torso_2_link";
   _lipmStabilizerConfig.comHeight = 0.879;
   _lipmStabilizerConfig.torsoWeight = 100;
+  // _lipmStabilizerConfig.dfzAdmittance = 0.0001;
+  // _lipmStabilizerConfig.dfzDamping = 0.01;
   _lipmStabilizerConfig.comActiveJoints =
   {
     "Root",
@@ -107,18 +110,26 @@ void TalosCommonRobotModule::setupCommon()
     "leg_right_5_joint",
     "leg_right_6_joint"
   };
-  _lipmStabilizerConfig.torsoPitch = 0;
-  _lipmStabilizerConfig.copAdmittance = Eigen::Vector2d{0.03, 0.04};
-  _lipmStabilizerConfig.dcmPropGain = 4.0;
-  _lipmStabilizerConfig.dcmIntegralGain = 10;
-  _lipmStabilizerConfig.dcmDerivGain = 0.2;
-  _lipmStabilizerConfig.dcmDerivatorTimeConstant = 5;
+  // _lipmStabilizerConfig.torsoPitch = 0.0;
+  // _lipmStabilizerConfig.copAdmittance = Eigen::Vector2d{0.03, 0.04};
+  // _lipmStabilizerConfig.dcmPropGain = 4.0;
+  // _lipmStabilizerConfig.dcmIntegralGain = 10;
+  // _lipmStabilizerConfig.dcmDerivGain = 0.2;
+  // _lipmStabilizerConfig.dcmDerivatorTimeConstant = 5;
+  // _lipmStabilizerConfig.dcmIntegratorTimeConstant = 10;
+
+  _lipmStabilizerConfig.torsoPitch = 0.0;
+  _lipmStabilizerConfig.copAdmittance = Eigen::Vector2d{0.001, 0.001};
+  _lipmStabilizerConfig.dcmPropGain = 7.0;
+  _lipmStabilizerConfig.dcmIntegralGain = 8.0;
+  _lipmStabilizerConfig.dcmDerivGain = 0.0;
+  _lipmStabilizerConfig.dcmDerivatorTimeConstant = 1;
   _lipmStabilizerConfig.dcmIntegratorTimeConstant = 10;
 
-	_ref_joint_order ={"arm_left_1_joint", "arm_left_2_joint", "arm_left_3_joint", "arm_left_4_joint","arm_left_5_joint", "arm_left_6_joint", 
+	_ref_joint_order ={"arm_left_1_joint", "arm_left_2_joint", "arm_left_3_joint", "arm_left_4_joint","arm_left_5_joint", "arm_left_6_joint",
 				             "arm_left_7_joint", "arm_right_1_joint","arm_right_2_joint","arm_right_3_joint","arm_right_4_joint",
 				             "arm_right_5_joint","arm_right_6_joint", "arm_right_7_joint","gripper_left_joint", "gripper_right_joint","head_1_joint", "head_2_joint",
-				             "leg_left_1_joint",  "leg_left_2_joint", "leg_left_3_joint", "leg_left_4_joint", "leg_left_5_joint", "leg_left_6_joint", 
+				             "leg_left_1_joint",  "leg_left_2_joint", "leg_left_3_joint", "leg_left_4_joint", "leg_left_5_joint", "leg_left_6_joint",
 										 "leg_right_1_joint", "leg_right_2_joint", "leg_right_3_joint", "leg_right_4_joint", "leg_right_5_joint","leg_right_6_joint",
 										 "torso_1_joint", "torso_2_joint"
 				 						 };
