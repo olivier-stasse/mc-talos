@@ -146,7 +146,8 @@ TalosRobotModule::TalosRobotModule(bool fixed) : TalosCommonRobotModule()
 void TalosCommonRobotModule::initConvexHull(
     const std::map<std::string, std::pair<std::string, std::string>> & files)
 {
-  std::string convexPath = path + "/convex/";
+  // std::string convexPath = path + "/convex/";
+  std::string convexPath = "/home/saeid/Softwares/mc-talos/src/convex/";
   std::map<std::string, std::pair<std::string, std::string>> res;
   for(const auto & f : files)
   {
