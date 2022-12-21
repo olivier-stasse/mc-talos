@@ -6,6 +6,10 @@
 #include <RBDyn/parsers/urdf.h>
 #include <sch/S_Object/S_Sphere.h>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <sch/S_Object/S_Sphere.h>
+
+
 
 namespace mc_robots
 {
@@ -23,6 +27,7 @@ void TalosCommonRobotModule::setupCommon()
 {
   _grippers = {{"l_gripper", {"gripper_left_joint"}, false}, {"r_gripper", {"gripper_right_joint"}, false}};
 
+  // clang-format off
   _stance = {
       {"torso_1_joint", {                      0.0}},
       {"torso_2_joint", {                      0.006761}},
@@ -69,6 +74,7 @@ void TalosCommonRobotModule::setupCommon()
       {"leg_right_5_joint", {                 -0.448041}},
       {"leg_right_6_joint", {                 -0.001708}}
   };
+  // clang-format on
 
   _default_attitude = {1, 0, 0, 0, 0, 0, 1.0};
 
@@ -86,6 +92,63 @@ void TalosCommonRobotModule::setupCommon()
   _bodySensors.emplace_back("Accelerometer", "torso_2_link", sva::PTransformd(accelerometer_rotationalOffsetQ, Eigen::Vector3d(0.049, 0.000, 0.078)));
   _bodySensors.emplace_back("FloatingBase", "base_link", sva::PTransformd::Identity());
 
+
+// conservative collision objects to reduce collision pairs
+  _collisionObjects["L_HAND_SPHERE"] = {"gripper_left_base_link", std::make_shared<sch::S_Sphere>(0.09)};
+  _collisionTransforms["L_HAND_SPHERE"] = sva::PTransformd(Eigen::Vector3d(-0.0, 0, -0.08));
+  _collisionObjects["R_HAND_SPHERE"] = {"gripper_right_base_link", std::make_shared<sch::S_Sphere>(0.09)};
+  _collisionTransforms["R_HAND_SPHERE"] = sva::PTransformd(Eigen::Vector3d(-0.0, 0, -0.08));
+  // clang-format off
+  _minimalSelfCollisions = {
+                            // torso link - right arm
+                            {"torso_2_link", "arm_right_2_link", 0.02, 0.005, 0.},
+                            {"torso_2_link", "arm_right_4_link", 0.03, 0.01, 0.},
+                            {"torso_2_link", "arm_right_5_link", 0.03, 0.01, 0.},
+                            {"torso_2_link", "R_HAND_SPHERE", 0.03, 0.01, 0.},
+
+                            // torso link - left arm
+                            {"torso_2_link", "arm_left_2_link", 0.02, 0.005, 0.},
+                            {"torso_2_link", "arm_left_4_link", 0.03, 0.01, 0.},
+                            {"torso_2_link", "arm_left_5_link", 0.03, 0.01, 0.},
+                            {"torso_2_link", "L_HAND_SPHERE", 0.03, 0.01, 0.},
+
+                            // base link - right arm
+                            {"base_link", "arm_right_4_link", 0.03, 0.01, 0.},
+                            {"base_link", "arm_right_5_link", 0.03, 0.01, 0.},
+                            {"base_link", "R_HAND_SPHERE", 0.03, 0.01, 0.},
+
+                            // base link - left arm
+                            {"base_link", "arm_left_4_link", 0.03, 0.01, 0.},
+                            {"base_link", "arm_left_5_link", 0.03, 0.01, 0.},
+                            {"base_link", "L_HAND_SPHERE", 0.03, 0.01, 0.},
+
+
+                            // Right leg - arms
+                            {"leg_right_1_link", "R_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_right_1_link", "L_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_right_3_link", "R_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_right_3_link", "L_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_right_3_link", "arm_right_5_link", 0.03, 0.01, 0.},
+
+                            // Left leg - arms
+                            {"leg_left_1_link", "L_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_left_1_link", "R_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_left_3_link", "R_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_left_3_link", "L_HAND_SPHERE", 0.03, 0.01, 0.},
+                            {"leg_left_3_link", "arm_left_5_link", 0.03, 0.01, 0.},
+
+                            // Leg - Leg collision
+                            {"leg_right_3_link", "leg_left_3_link", 0.01, 0.001, 0.},
+                            {"leg_right_4_link", "leg_left_4_link", 0.01, 0.001, 0.},
+                            {"leg_right_6_link", "leg_left_6_link", 0.01, 0.001, 0.},
+                            {"leg_right_6_link", "leg_left_4_link", 0.02, 0.005, 0.},
+                            {"leg_right_4_link", "leg_left_6_link", 0.02, 0.005, 0.}
+  };
+  // clang-format on
+
+  _commonSelfCollisions = _minimalSelfCollisions;
+
+
   // Configure the stabilizer
   _lipmStabilizerConfig.leftFootSurface = "LeftFootCenter";
   _lipmStabilizerConfig.rightFootSurface = "RightFootCenter";
@@ -94,6 +157,8 @@ void TalosCommonRobotModule::setupCommon()
   _lipmStabilizerConfig.torsoWeight = 100;
   // _lipmStabilizerConfig.dfzAdmittance = 0.0001;
   // _lipmStabilizerConfig.dfzDamping = 0.01;
+
+  // clang-format off
   _lipmStabilizerConfig.comActiveJoints =
   {
     "Root",
@@ -110,6 +175,8 @@ void TalosCommonRobotModule::setupCommon()
     "leg_right_5_joint",
     "leg_right_6_joint"
   };
+  // clang-format on
+
   // _lipmStabilizerConfig.torsoPitch = 0.0;
   // _lipmStabilizerConfig.copAdmittance = Eigen::Vector2d{0.03, 0.04};
   // _lipmStabilizerConfig.dcmPropGain = 4.0;
@@ -128,7 +195,7 @@ void TalosCommonRobotModule::setupCommon()
 
 	_ref_joint_order ={"arm_left_1_joint", "arm_left_2_joint", "arm_left_3_joint", "arm_left_4_joint","arm_left_5_joint", "arm_left_6_joint",
 				             "arm_left_7_joint", "arm_right_1_joint","arm_right_2_joint","arm_right_3_joint","arm_right_4_joint",
-				             "arm_right_5_joint","arm_right_6_joint", "arm_right_7_joint","gripper_left_joint", "gripper_right_joint","head_1_joint", "head_2_joint",
+				             "arm_right_5_joint","arm_right_6_joint", "arm_right_7_joint", "gripper_left_joint", "gripper_right_joint", "head_1_joint", "head_2_joint",
 				             "leg_left_1_joint",  "leg_left_2_joint", "leg_left_3_joint", "leg_left_4_joint", "leg_left_5_joint", "leg_left_6_joint",
 										 "leg_right_1_joint", "leg_right_2_joint", "leg_right_3_joint", "leg_right_4_joint", "leg_right_5_joint","leg_right_6_joint",
 										 "torso_1_joint", "torso_2_joint"
@@ -137,8 +204,6 @@ void TalosCommonRobotModule::setupCommon()
 
 TalosRobotModule::TalosRobotModule(bool fixed) : TalosCommonRobotModule()
 {
-  //urdf_path = path + "/urdf/talos_full_v2.urdf";
-  //_real_urdf = urdf_path;
   init(rbd::parsers::from_urdf_file(urdf_path, fixed, {}, true, "base_link"));
   setupCommon();
 }
@@ -146,12 +211,11 @@ TalosRobotModule::TalosRobotModule(bool fixed) : TalosCommonRobotModule()
 void TalosCommonRobotModule::initConvexHull(
     const std::map<std::string, std::pair<std::string, std::string>> & files)
 {
-  // std::string convexPath = path + "/convex/";
-  std::string convexPath = "/home/saeid/Softwares/mc-talos/src/convex/";
+  std::string convexPath = TALOS_CONVEX_DIR;
   std::map<std::string, std::pair<std::string, std::string>> res;
   for(const auto & f : files)
   {
-    _convexHull[f.first] = std::pair<std::string, std::string>(f.second.first, convexPath + f.second.second + "-ch.txt");
+    _convexHull[f.first] = std::pair<std::string, std::string>(f.second.first, convexPath + "/" + f.second.second + "-ch.txt");
   }
 }
 
@@ -160,15 +224,45 @@ std::map<std::string, std::pair<std::string, std::string>> TalosCommonRobotModul
 {
   // Add Bodies
   std::map<std::string, std::pair<std::string, std::string>> res;
+  const std::vector<std::string> prefix{"arm", "torso", "head", "gripper"};
+  auto mirroredConvexes = std::vector<std::string>{};
+  for(unsigned i = 1; i<8; ++i) { mirroredConvexes.push_back(fmt::format("arm_right_{}_link", i)); };
+  for(unsigned i = 1; i<7; ++i) { mirroredConvexes.push_back(fmt::format("leg_right_{}_link", i)); };
   for(const auto & b : mb.bodies())
   {
+
     // Filter out virtual links without convex files
     if(std::find(std::begin(virtualLinks), std::end(virtualLinks), b.name()) == std::end(virtualLinks))
     {
-			auto fname = boost::algorithm::replace_first_copy(b.name(), "_link", "");
-			fname = boost::algorithm::replace_first_copy(fname, "left_", "");
-			fname = boost::algorithm::replace_first_copy(fname, "right_", "");
-      res[b.name()] = {b.name(), fname};
+      // Extract convex paths from the urdf <collision> geometry.
+      // For the right arm and leg, the convex geometry is mirrored. As we currently don't have support for
+      // mirroring sch geometry, we use manually mirrored convex files located in the mirrored/ directory.
+      const auto &geom = _collision;
+      if(geom.count(b.name()))
+      {
+        const auto & geoms = geom.at(b.name());
+        for(const auto & gg : geoms)
+        {
+          const auto & g = gg.geometry;
+          if(g.type == rbd::parsers::Geometry::MESH)
+          {
+            auto path = boost::get<rbd::parsers::Geometry::Mesh>(g.data).filename;
+            auto prefix = std::string{"package://talos_description/meshes/"};
+            if (path.rfind(prefix, 0) == 0)
+            {
+              path = path.substr(prefix.size());
+              auto bpath = boost::filesystem::path{path};
+              path = bpath.parent_path().string() + "/" + bpath.stem().string();
+            }
+            if(std::find(mirroredConvexes.begin(), mirroredConvexes.end(), b.name()) != mirroredConvexes.end())
+            {
+              path = "mirrored/" + path;
+              mc_rtc::log::info("Body {} has a mirrored convex file, using {}", b.name(), path);
+            }
+            res[b.name()] = {b.name(), path};
+          }
+        }
+      }
     }
   }
 
@@ -177,45 +271,8 @@ std::map<std::string, std::pair<std::string, std::string>> TalosCommonRobotModul
   addBody("torso", "torso_2_link");
   addBody("r_ankle", "leg_right_6_link");
   addBody("l_ankle", "leg_left_6_link");
-  addBody("CHEST_P_LINK", "torso_1_link");
   addBody("r_wrist", "arm_right_7_link");
   addBody("l_wrist", "arm_left_7_link");
-  //addBody("R_HIP_Y_LINK", "HIP_Y");
-  //addBody("R_HIP_R_LINK", "CHEST_P");
-  //addBody("R_ANKLE_P_LINK", "L_ANKLE_P");
-  //addBody("L_HIP_Y_LINK", "HIP_Y");
-  //addBody("L_HIP_R_LINK", "CHEST_P");
-  //addBody("R_SHOULDER_Y_LINK", "SHOULDER_Y");
-  //addBody("R_ELBOW_P_LINK", "ELBOW_P");
-  //addBody("R_WRIST_P_LINK", "WRIST_P");
-
-
-
-  // auto finger = [&addBody](const std::string & prefix) {
-  //   addBody(prefix + "_HAND_J0_LINK", prefix + "_THUMB");
-  //   addBody(prefix + "_HAND_J1_LINK", prefix + "_F1");
-  //   for(unsigned int i = 2; i < 6; ++i)
-  //   {
-  //     std::stringstream key1;
-  //     key1 << prefix << "_F" << i << "2_LINK";
-  //     std::stringstream key2;
-  //     key2 << prefix << "_F" << i << "3_LINK";
-  //     addBody(key1.str(), "F2");
-  //     addBody(key2.str(), "F3");
-  //   }
-  // };
-  // finger("R");
-  // finger("L");
-
-  auto addWristSubConvex = [&res](const std::string & prefix) {
-    // std::string wristY = prefix + "_WRIST_Y_LINK";
-    std::string wristR = boost::algorithm::to_lower_copy(prefix) + "_wrist";
-    // res[wristY + "_sub0"] = {wristY, prefix + "_WRIST_Y_sub0"};
-    res[wristR + "_sub0"] = {wristR, prefix + "_WRIST_R_sub0"};
-    res[wristR + "_sub1"] = {wristR, prefix + "_WRIST_R_sub1"};
-  };
-  addWristSubConvex("L");
-  addWristSubConvex("R");
 
   return res;
 }
