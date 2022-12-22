@@ -30,23 +30,23 @@ void TalosCommonRobotModule::setupCommon()
   // clang-format off
   _stance = {
       {"torso_1_joint", {                      0.0}},
-      {"torso_2_joint", {                      0.006761}},
+      {"torso_2_joint", {                      0.0505}},
       {"head_1_joint", {                       0.0}},
       {"head_2_joint", {                       0.0}},
-      {"arm_left_1_joint", {                   0.25847}},
-      {"arm_left_2_joint", {                   0.173046}},
-      {"arm_left_3_joint", {                   0.0002}},
-      {"arm_left_4_joint", {                  -0.525366}},
+      {"arm_left_1_joint", {                   0.4}},
+      {"arm_left_2_joint", {                   0.24}},
+      {"arm_left_3_joint", {                   -0.6}},
+      {"arm_left_4_joint", {                  -1.45}},
       {"arm_left_5_joint", {                   0.0}},
       {"arm_left_6_joint", {                   0.0}},
-      {"arm_left_7_joint", {                   0.1}},
-      {"arm_right_1_joint", {                 -0.25847}},
-      {"arm_right_2_joint", {                 -0.173046}},
-      {"arm_right_3_joint", {                 -0.0002}},
-      {"arm_right_4_joint", {                 -0.525366}},
+      {"arm_left_7_joint", {                   0.0}},
+      {"arm_right_1_joint", {                 -0.4}},
+      {"arm_right_2_joint", {                 -0.24}},
+      {"arm_right_3_joint", {                  0.6}},
+      {"arm_right_4_joint", {                 -1.45}},
       {"arm_right_5_joint", {                  0.0}},
       {"arm_right_6_joint", {                  0.0}},
-      {"arm_right_7_joint", {                  0.1}},
+      {"arm_right_7_joint", {                  0.0}},
       {"gripper_left_joint", {                 0.0}},
       {"gripper_left_inner_double_joint", {    0.0}},
       {"gripper_left_fingertip_1_joint", {     0.0}},
@@ -62,21 +62,22 @@ void TalosCommonRobotModule::setupCommon()
       {"gripper_right_inner_single_joint", {   0.0}},
       {"gripper_right_fingertip_3_joint", {    0.0}},
       {"leg_left_1_joint", {                   0.0}},
-      {"leg_left_2_joint", {                   0.0}},
-      {"leg_left_3_joint", {                  -0.411354}},
-      {"leg_left_4_joint", {                   0.859395}},
-      {"leg_left_5_joint", {                  -0.448041}},
-      {"leg_left_6_joint", {                  -0.001708}},
+      {"leg_left_2_joint", {                   0.003}},
+      {"leg_left_3_joint", {                  -0.26}},
+      {"leg_left_4_joint", {                   0.6}},
+      {"leg_left_5_joint", {                  -0.336}},
+      {"leg_left_6_joint", {                  -0.005}},
+
       {"leg_right_1_joint", {                  0.0}},
-      {"leg_right_2_joint", {                  0.0}},
-      {"leg_right_3_joint", {                 -0.411354}},
-      {"leg_right_4_joint", {                  0.859395}},
-      {"leg_right_5_joint", {                 -0.448041}},
-      {"leg_right_6_joint", {                 -0.001708}}
+      {"leg_right_2_joint", {                  0.003}},
+      {"leg_right_3_joint", {                 -0.26}},
+      {"leg_right_4_joint", {                  0.6}},
+      {"leg_right_5_joint", {                 -0.336}},
+      {"leg_right_6_joint", {                  -0.005}}
   };
   // clang-format on
 
-  _default_attitude = {1, 0, 0, 0, 0, 0, 1.0};
+  _default_attitude = {1, 0, 0, 0, 0.025, -0.0038, 1.05105};
 
   auto fileByBodyName = stdCollisionsFiles(mb);
   initConvexHull(fileByBodyName);
