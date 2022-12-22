@@ -20,7 +20,7 @@ TalosCommonRobotModule::TalosCommonRobotModule() : RobotModule(TALOS_DESCRIPTION
 	urdf_path = TALOS_URDF_PATH;
 	_real_urdf = urdf_path;
 	rsdf_dir = TALOS_RSDF_DIR;
-  calib_dir = path + "/calib";
+  calib_dir = TALOS_CALIB_DIR;
 }
 
 void TalosCommonRobotModule::setupCommon()
@@ -82,14 +82,14 @@ void TalosCommonRobotModule::setupCommon()
   initConvexHull(fileByBodyName);
 
   // Force Sensor attachments
-  _forceSensors.emplace_back("RightFootForceSensor", "leg_right_6_link", sva::PTransformd(Eigen::Vector3d(0, 0, -0.098)));
-  _forceSensors.emplace_back("LeftFootForceSensor", "leg_left_6_link", sva::PTransformd(Eigen::Vector3d(0, 0, -0.098)));
-  _forceSensors.emplace_back("RightHandForceSensor", "arm_right_7_link", sva::PTransformd(Eigen::Vector3d(0, 0, -0.14)));
-  _forceSensors.emplace_back("LeftHandForceSensor", "arm_left_7_link", sva::PTransformd(Eigen::Vector3d(0, 0, -0.14)));
+  // XXX according to PAL Talos Handbook, p11
+  _forceSensors.emplace_back("RightFootForceSensor", "leg_right_6_link", sva::PTransformd::Identity());
+  _forceSensors.emplace_back("LeftFootForceSensor", "leg_left_6_link", sva::PTransformd::Identity());
+  _forceSensors.emplace_back("RightHandForceSensor", "wrist_right_ft_link", sva::PTransformd::Identity());
+  _forceSensors.emplace_back("LeftHandForceSensor", "wrist_left_ft_link", sva::PTransformd::Identity());
 
   _bodySensors.clear();
-  Eigen::Quaterniond accelerometer_rotationalOffsetQ(0.0, -0.707, -0.707, 0.0);
-  _bodySensors.emplace_back("Accelerometer", "torso_2_link", sva::PTransformd(accelerometer_rotationalOffsetQ, Eigen::Vector3d(0.049, 0.000, 0.078)));
+  _bodySensors.emplace_back("Accelerometer", "imu_link", sva::PTransformd::Identity());
   _bodySensors.emplace_back("FloatingBase", "base_link", sva::PTransformd::Identity());
 
 

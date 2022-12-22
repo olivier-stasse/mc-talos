@@ -1,6 +1,6 @@
 <robot name="talos">
-  <planar_surface name="RightHandBase" link="arm_right_7_link">
-    <origin xyz="0 0 -0.159" rpy="0 0 0" />
+  <planar_surface name="RightHandBase" link="wrist_right_ft_link">
+    <origin xyz="0 0 -0.1" rpy="0 0 0" />
     <points>
       <point xy="0.04 -0.03" />
       <point xy="0.04 0.03" />
