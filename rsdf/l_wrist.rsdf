@@ -1,0 +1,12 @@
+<robot name="talos">
+  <planar_surface name="LeftHandBase" link="wrist_left_ft_link">
+    <origin xyz="0 0 -0.1" rpy="0 0 0" />
+    <points>
+      <point xy="0.05 -0.05" />
+      <point xy="0.05 0.05" />
+      <point xy="-0.05 0.05" />
+      <point xy="-0.05 -0.05" />
+    </points>
+    <material name="plastic" />
+  </planar_surface>
+</robot>

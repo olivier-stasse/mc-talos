@@ -1,0 +1,22 @@
+<robot name="talos">
+  <planar_surface name="LeftFoot" link="leg_left_6_link">
+    <origin xyz="0 0 -0.1" rpy="0 0 0" />
+    <points>
+      <point xy="0.1  -0.06" />
+      <point xy="0.1   0.06" />
+      <point xy="-0.1  0.06" />
+      <point xy="-0.1 -0.06" />
+    </points>
+    <material name="plastic" />
+  </planar_surface>
+  <planar_surface name="LeftFootCenter" link="leg_left_6_link">
+    <origin xyz="0 0 -0.1" rpy="0 0 0" />
+    <points>
+      <point xy="0.1  -0.06" />
+      <point xy="0.1   0.06" />
+      <point xy="-0.1  0.06" />
+      <point xy="-0.1 -0.06" />
+    </points>
+    <material name="plastic" />
+  </planar_surface>
+</robot>

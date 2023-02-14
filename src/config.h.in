@@ -1,3 +1,7 @@
 #pragma once
 
 constexpr auto TALOS_DESCRIPTION_PATH = "@TALOS_DESCRIPTION_PATH@";
+constexpr auto TALOS_RSDF_DIR = "@TALOS_RSDF_DIR@";
+constexpr auto TALOS_CONVEX_DIR = "@TALOS_CONVEX_DIR@";
+constexpr auto TALOS_URDF_PATH = "@TALOS_URDF_PATH@";
+constexpr auto TALOS_CALIB_DIR = "@TALOS_CALIB_DIR@";
