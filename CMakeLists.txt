@@ -24,7 +24,7 @@ set(xacro_args "${xacro_args} --default_configuration_type:=False")
 
 set(robot_root_xacro "robots/talos_full_v2.urdf.xacro")
 
-generate_mc_rtc_urdf(talos_description ${xacro_src} ${robot_name} ${robot_root_xacro} "${xacro_args}")
+generate_mc_rtc_urdf(talos_description "${xacro_src}" "${robot_name}" "${robot_root_xacro}" "${xacro_args}")
 
 if("${talos_description_DIR}" STREQUAL "")
   message(FATAL_ERROR "Your talos_description package does not define where to find the data")
