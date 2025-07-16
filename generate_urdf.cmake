@@ -84,6 +84,7 @@ macro(generate_mc_rtc_urdf )
     COMMAND ${XACRO} ${xacro_SRC} ${xacro_args} -o ${urdf_OUT}
     DEPENDS ${xacro_SRC}
     COMMENT "Generate ${urdf_OUT}")
+  add_custom_target(generate_urdf ALL DEPENDS ${urdf_OUT})
 
   # Install
   install(FILES "${urdf_OUT}" DESTINATION ${DATA_INSTALL_FOLDER}/urdf/)
