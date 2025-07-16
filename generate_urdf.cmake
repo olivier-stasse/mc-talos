@@ -74,6 +74,7 @@ macro(generate_mc_rtc_urdf )
   message(STATUS "urdf_out: ${urdf_OUT}")
   message(STATUS "XACRO:${XACRO}")
   message(STATUS "xacro_in: ${xacro_IN}")
+  message(STATUS "xacro_SRC: ${xacro_SRC}")  
   message(STATUS "xacro_args: ${lxacro_args}")
   message(STATUS "urdf_OUT: ${urdf_OUT}")  
   
