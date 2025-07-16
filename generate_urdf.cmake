@@ -54,7 +54,7 @@ macro(generate_mc_rtc_urdf robot_description xacro_src robot_name robot_root_xac
   find_program(XACRO xacro REQUIRED)
 
   # Build input and output arguments to call xacro
-  set(urdf_OUT "${CMAKE_CURRENT_BUILD_DIR}/urdf/${robot_name}.urdf")
+  set(urdf_OUT "${CMAKE_CURRENT_BINARY_DIR}/urdf/${robot_name}.urdf")
 
   set(xacro_IN ${${robot_description}_PREFIX}/${robot_root_xacro})
   set(xacro_SRC ${xacro_SRC} ${xacro_IN})

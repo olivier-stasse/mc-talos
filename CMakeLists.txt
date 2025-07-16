@@ -22,7 +22,7 @@ set(xacro_args "${xacro_args} --head_type:=default")
 set(xacro_args "${xacro_args} --flexibility:=False")
 set(xacro_args "${xacro_args} --default_configuration_type:=False")
 
-set(robot_root_xacro robots/talos_full_v2.urdf.xacro )
+set(robot_root_xacro "robots/talos_full_v2.urdf.xacro")
 
 generate_mc_rtc_urdf(talos_description xacro_src robot_name robot_root_xacro xacro_args)
 
