@@ -11,12 +11,22 @@
 # takes xacro_args in argument and parse the file
 # ${${robot_description}_PREFIX}/${robot_root_xacro}
 
+function(dump_cmake_variables)
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+    foreach (_variableName ${_variableNames})
+        if ((NOT DEFINED ARGV0) OR _variableName MATCHES ${ARGV0})
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
+endfunction()
 
 macro(generate_mc_rtc_urdf robot_description xacro_src robot_name robot_root_xacro xacro_args)
   find_package(ament_cmake REQUIRED)
   find_package(${robot_description} REQUIRED)
 
-  set(
+  dump_cmake_variables(${robot_description})
+
   message(STATUS "${robot_description} path ${${robot_description}_DIR}")
 
   # Checks that robot_description is correct
