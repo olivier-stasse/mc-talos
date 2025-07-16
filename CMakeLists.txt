@@ -29,7 +29,7 @@ generate_mc_rtc_urdf(talos_description xacro_src robot_name robot_root_xacro xac
 if("${talos_description_DIR}" STREQUAL "")
   message(FATAL_ERROR "Your talos_description package does not define where to find the data")
 endif()
-set(TALOS_DESCRIPTION_PATH "${talos_description_DIR}/share/talos_description/robots")
+set(TALOS_DESCRIPTION_PATH "${talos_description_PREFIX}/share/talos_description/robots")
 
 set(TALOS_URDF_PATH "${TALOS_DESCRIPTION_PATH}/talos_full_v2.urdf")
 set(TALOS_RSDF_DIR "${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/rsdf")
