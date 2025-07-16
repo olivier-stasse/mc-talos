@@ -11,30 +11,52 @@
 # takes xacro_args in argument and parse the file
 # ${${robot_description}_PREFIX}/${robot_root_xacro}
 
+function(dump_cmake_variables)
+    get_cmake_property(_variableNames VARIABLES)
+    list (SORT _variableNames)
+    foreach (_variableName ${_variableNames})
+        if ((NOT DEFINED ARGV0) OR _variableName MATCHES ${ARGV0})
+            message(STATUS "${_variableName}=${${_variableName}}")
+        endif()
+    endforeach()
+endfunction()
 
-macro(generate_mc_rtc_urdf robot_description xacro_src robot_name robot_root_xacro xacro_args)
+macro(generate_mc_rtc_urdf )
+  set(lrobot_description ${ARGV0})
+  set(lxacro_src ${ARGV1})
+  set(lrobot_name ${ARGV2})
+  set(lrobot_root_xacro ${ARGV3})
+  set(lxacro_args ${ARGV4})
+
+  message(STATUS "lrobot_description: ${lrobot_description}")
+  message(STATUS "lxacro_src: ${lxacro_src}")
+  message(STATUS "lrobot_name: ${lrobot_name}")
+  message(STATUS "lrobot_root_xacro ${lrobot_root_xacro}")
+  message(STATUS "lxacro_args ${lxacro_args}")    
+  
   find_package(ament_cmake REQUIRED)
-  find_package(${robot_description} REQUIRED)
+  find_package(${lrobot_description} REQUIRED)
 
-  set(
-  message(STATUS "${robot_description} path ${${robot_description}_DIR}")
+  dump_cmake_variables(${lrobot_description})
+
+  message(STATUS "${lrobot_description} path ${${lrobot_description}_DIR}")
 
   # Checks that robot_description is correct
-  if("${${robot_description}_INSTALL_PREFIX}" STREQUAL "")
-    if("${${robot_description}_SOURCE_PREFIX}" STREQUAL "")
-      if("${${robot_description}_DIR}" STREQUAL "")
+  if("${${lrobot_description}_INSTALL_PREFIX}" STREQUAL "")
+    if("${${lrobot_description}_SOURCE_PREFIX}" STREQUAL "")
+      if("${${lrobot_description}_DIR}" STREQUAL "")
         message(
           FATAL_ERROR
-          "${robot_description} does not provide SOURCE_PREFIX or INSTALL_PREFIX")
+          "${lrobot_description} does not provide SOURCE_PREFIX or INSTALL_PREFIX")
       else()
-        set(${robot_description}_PREFIX "${${robot_description}_DIR}/..")
+        set(${lrobot_description}_PREFIX "${${lrobot_description}_DIR}/..")
       endif()
     else()
-      set(${robot_description}_PREFIX "${${robot_description}_SOURCE_PREFIX}")
+      set(${lrobot_description}_PREFIX "${${lrobot_description}_SOURCE_PREFIX}")
     endif()
   else()
-    set(${robot_description}_PREFIX
-      "${${robot_description}_INSTALL_PREFIX}/share/${robot_description}")
+    set(${lrobot_description}_PREFIX
+      "${${lrobot_description}_INSTALL_PREFIX}/share/${lrobot_description}")
   endif()
 
   # Prepare the target directory
@@ -44,20 +66,26 @@ macro(generate_mc_rtc_urdf robot_description xacro_src robot_name robot_root_xac
   find_program(XACRO xacro REQUIRED)
 
   # Build input and output arguments to call xacro
-  set(urdf_OUT "${CMAKE_CURRENT_BUILD_DIR}/urdf/${robot_name}.urdf")
-  
-  set(xacro_IN ${${robot_description}_PREFIX}/urdf/ur.urdf.xacro)
-  set(xacro_SRC ${xacro_SRC} ${xacro_IN}
-                ${${robot_description}_PREFIX}/${robot_root_xacro})
+  set(urdf_OUT "${CMAKE_CURRENT_BINARY_DIR}/urdf/${lrobot_name}.urdf")
 
+  set(xacro_IN ${${lrobot_description}_PREFIX}/${lrobot_root_xacro})
+  set(xacro_SRC ${lxacro_src} ${xacro_IN})
+
+  message(STATUS "urdf_out: ${urdf_OUT}")
+  message(STATUS "XACRO:${XACRO}")
+  message(STATUS "xacro_in: ${xacro_IN}")
+  message(STATUS "xacro_SRC: ${xacro_SRC}")  
+  message(STATUS "xacro_args: ${lxacro_args}")
+  message(STATUS "urdf_OUT: ${urdf_OUT}")  
+  
   # Call xacro
   add_custom_command(
     OUTPUT ${urdf_OUT}
-    COMMAND ${XACRO} ${xacro_IN} ${xacro_args} -o ${urdf_OUT}
+    COMMAND ${XACRO} ${xacro_SRC} ${xacro_args} -o ${urdf_OUT}
     DEPENDS ${xacro_SRC}
     COMMENT "Generate ${urdf_OUT}")
 
   # Install
   install(FILES "${urdf_OUT}" DESTINATION ${DATA_INSTALL_FOLDER}/urdf/)
-  
+
 endmacro()
