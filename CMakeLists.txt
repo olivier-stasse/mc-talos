@@ -3,8 +3,29 @@ set(CMAKE_CXX_STANDARD 17)
 
 project(mc_talos CXX)
 
+include(generate_urdf.cmake)
+
 find_package(mc_rtc REQUIRED)
 find_package(talos_description REQUIRED)
+
+# Generate URDF
+set(robot_name "talos_full_v2")
+set(xacro_src "")
+set(xacro_args "--used-fixed_base:=false")
+set(xacro_args "${xacro_args} --use_sim:=False")
+set(xacro_args "${xacro_args} --test:=False")
+set(xacro_args "${xacro_args} --robot_model:=full_v2")
+set(xacro_args "${xacro_args} --enable_crane:=False")
+set(xacro_args "${xacro_args} --foot_collision:=thinbox")
+set(xacro_args "${xacro_args} --disable_gazebo_camera:=true")
+set(xacro_args "${xacro_args} --head_type:=default")
+set(xacro_args "${xacro_args} --flexibility:=False")
+set(xacro_args "${xacro_args} --default_configuration_type:=False")
+
+set(robot_root_xacro robots/talos_full_v2.urdf.xacro )
+
+generate_mc_rtc_urdf(talos_description xacro_src robot_name robot_root_xacro xacro_args)
+
 if("${talos_description_DIR}" STREQUAL "")
   message(FATAL_ERROR "Your talos_description package does not define where to find the data")
 endif()
