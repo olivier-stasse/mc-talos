@@ -47,8 +47,13 @@ message("-- TALOS_URDF_PATH: ${MC_RTC_TALOS_URDF_PATH}")
 
 configure_file(src/config.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/config.h")
 
+# Generate robot module
 add_robot(talos src/talos.cpp src/talos.h)
 target_include_directories(talos PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/include")
+
+# Install LIPMWalking file for talos.
+install(FILES etc/mc_controllers/LIPMWalking/talos.yaml
+  DESTINATION ${MC_CONTROLLER_RUNTIME_INSTALL_PREFIX}/LIPMWalking/)
 
 option(DISABLE_TESTS "Disable unit tests" OFF)
 if(NOT ${DISABLE_TESTS})
