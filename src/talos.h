@@ -47,7 +47,7 @@ extern "C"
 {
   ROBOT_MODULE_API void MC_RTC_ROBOT_MODULE(std::vector<std::string> & names)
   {
-    names = {"Talos"};
+    names = {"talos"};
   }
   ROBOT_MODULE_API void destroy(mc_rbdyn::RobotModule * ptr)
   {
@@ -55,12 +55,12 @@ extern "C"
   }
   ROBOT_MODULE_API mc_rbdyn::RobotModule * create(const std::string & n)
   {
-    ROBOT_MODULE_CHECK_VERSION("Talos")
-    if(n == "Talos")
+    ROBOT_MODULE_CHECK_VERSION("talos")
+    if(n == "talos")
     {
       return new mc_robots::TalosRobotModule(false);
     }
-    if(n == "TalosFixed")
+    if(n == "talosFixed")
     {
       return new mc_robots::TalosRobotModule(false);
     }
