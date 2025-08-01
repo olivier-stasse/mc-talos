@@ -11,4 +11,4 @@ macro(test_module TARGET NAME)
   add_test(test_${NAME}_module test_${NAME}_module)
 endmacro()
 
-test_module(talos Talos)
+test_module(talos talos)

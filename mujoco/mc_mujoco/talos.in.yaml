@@ -1,0 +1,2 @@
+xmlModelPath: "@TALOS_XML_MODEL_PATH@"
+pdGainsPath: "@TALOS_PDGAINS_PATH@"

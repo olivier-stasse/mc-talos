@@ -21,6 +21,7 @@ TalosCommonRobotModule::TalosCommonRobotModule() : RobotModule(TALOS_DESCRIPTION
 	_real_urdf = urdf_path;
 	rsdf_dir = TALOS_RSDF_DIR;
   calib_dir = TALOS_CALIB_DIR;
+
 }
 
 void TalosCommonRobotModule::setupCommon()
@@ -194,17 +195,44 @@ void TalosCommonRobotModule::setupCommon()
   _lipmStabilizerConfig.dcmDerivatorTimeConstant = 1;
   _lipmStabilizerConfig.dcmIntegratorTimeConstant = 10;
 
-	_ref_joint_order ={"arm_left_1_joint", "arm_left_2_joint", "arm_left_3_joint", "arm_left_4_joint","arm_left_5_joint", "arm_left_6_joint",
-				             "arm_left_7_joint", "arm_right_1_joint","arm_right_2_joint","arm_right_3_joint","arm_right_4_joint",
-				             "arm_right_5_joint","arm_right_6_joint", "arm_right_7_joint", "gripper_left_joint", "gripper_right_joint", "head_1_joint", "head_2_joint",
-				             "leg_left_1_joint",  "leg_left_2_joint", "leg_left_3_joint", "leg_left_4_joint", "leg_left_5_joint", "leg_left_6_joint",
-										 "leg_right_1_joint", "leg_right_2_joint", "leg_right_3_joint", "leg_right_4_joint", "leg_right_5_joint","leg_right_6_joint",
-										 "torso_1_joint", "torso_2_joint"
-				 						 };
+  _ref_joint_order ={"arm_left_1_joint", "arm_left_2_joint", "arm_left_3_joint", "arm_left_4_joint","arm_left_5_joint", "arm_left_6_joint", "arm_left_7_joint",
+    "arm_right_1_joint","arm_right_2_joint","arm_right_3_joint","arm_right_4_joint", "arm_right_5_joint","arm_right_6_joint", "arm_right_7_joint",
+    "gripper_left_joint", "gripper_left_motor_single_joint", "gripper_left_inner_double_joint", "gripper_left_inner_single_joint",
+    "gripper_left_fingertip_1_joint", "gripper_left_fingertip_2_joint", "gripper_left_fingertip_3_joint",
+    "gripper_right_joint", "gripper_right_motor_single_joint", "gripper_right_inner_double_joint", "gripper_right_inner_single_joint",
+    "gripper_right_fingertip_1_joint", "gripper_right_fingertip_2_joint", "gripper_right_fingertip_3_joint",
+    "head_1_joint", "head_2_joint",
+    "leg_left_1_joint",  "leg_left_2_joint", "leg_left_3_joint", "leg_left_4_joint", "leg_left_5_joint", "leg_left_6_joint",
+    "leg_right_1_joint", "leg_right_2_joint", "leg_right_3_joint", "leg_right_4_joint", "leg_right_5_joint","leg_right_6_joint",
+    "torso_1_joint", "torso_2_joint"
+  };
 }
 
-TalosRobotModule::TalosRobotModule(bool fixed) : TalosCommonRobotModule()
+  TalosRobotModule::TalosRobotModule(bool fixed, bool filter_mimics) : TalosCommonRobotModule()
 {
+
+  std::vector<std::string> filter_links = {};
+  if(filter_mimics)
+  {
+    // clang-format off
+    filter_links = {
+      "gripper_left_inner_double_link",
+      "gripper_left_inner_single_link",
+      "gripper_left_motor_single_link",
+      "gripper_left_motor_double_link",
+      "gripper_left_fingertip_1_link",
+      "gripper_left_fingertip_2_link",
+      "gripper_left_fingertip_3_link",
+      "gripper_right_inner_double_link",
+      "gripper_right_inner_single_link",
+      "gripper_right_motor_single_link",
+      "gripper_right_motor_double_link",
+      "gripper_right_fingertip_1_link",
+      "gripper_right_fingertip_2_link",
+      "gripper_right_fingertip_3_link",
+    };
+    // clang-format on
+  }
   init(rbd::parsers::from_urdf_file(urdf_path, fixed, {}, true, "base_link"));
   setupCommon();
 }

@@ -32,13 +32,13 @@ public:
 struct MC_ROBOTS_DLLAPI TalosSkeletonRobotModule : public TalosCommonRobotModule
 {
 public:
-  TalosSkeletonRobotModule(bool fixed);
+  TalosSkeletonRobotModule(bool fixed, bool filter_mimics);
 };
 
 struct MC_ROBOTS_DLLAPI TalosRobotModule : public TalosCommonRobotModule
 {
 public:
- TalosRobotModule(bool fixed);
+  TalosRobotModule(bool fixed, bool filter_mimics);
 };
 
 } // namespace mc_robots
@@ -58,11 +58,11 @@ extern "C"
     ROBOT_MODULE_CHECK_VERSION("talos")
     if(n == "talos")
     {
-      return new mc_robots::TalosRobotModule(false);
+      return new mc_robots::TalosRobotModule(false,false);
     }
     if(n == "talosFixed")
     {
-      return new mc_robots::TalosRobotModule(false);
+      return new mc_robots::TalosRobotModule(false,false);
     }
     else
     {

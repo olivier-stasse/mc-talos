@@ -8,6 +8,9 @@ include(generate_urdf.cmake)
 find_package(mc_rtc REQUIRED)
 find_package(talos_description REQUIRED)
 
+# MuJoCo for TALOS with mc_rtc
+option(TALOS_WITH_MJ "Install files to perform MuJoCo simulation" ON)
+
 # Generate URDF
 set(robot_name "talos_full_v2")
 set(xacro_src "")
@@ -56,7 +59,15 @@ install(FILES etc/mc_controllers/LIPMWalking/talos.yaml
   DESTINATION ${MC_CONTROLLER_RUNTIME_INSTALL_PREFIX}/LIPMWalking/)
 
 option(DISABLE_TESTS "Disable unit tests" OFF)
+
 if(NOT ${DISABLE_TESTS})
   enable_testing()
   add_subdirectory(tests)
+endif()
+
+
+if(${TALOS_WITH_MJ})
+  add_subdirectory(mujoco)
+else()
+  message("MuJoCo extension for TALOS will not be installed ${TALOS_WITH_MJ}")
 endif()
